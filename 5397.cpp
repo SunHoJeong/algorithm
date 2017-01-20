@@ -8,12 +8,12 @@
 
 #include <iostream>
 #include <string>
-#include <queue>
+#include <stack>
 
 using namespace std;
 
-queue<char> left_q;
-queue<char> right_q;
+stack<char> left_s;
+stack<char> right_s;
 
 int main(){
     int n;
@@ -25,27 +25,42 @@ int main(){
         
         for(int i=0; i<str.size(); i++){
             if(str[i] == '<'){
-                if(!right_q.empty()){
-                    char temp = right_q.front();
-                    right_q.pop();
-                    left_q.push(temp);
+                if(!left_s.empty()){
+                    char temp = left_s.top();
+                    left_s.pop();
+                    right_s.push(temp);
                 }
             }
             else if(str[i] == '>'){
-                if(!left_q.empty()){
-                    char temp = left_q.front();
-                    left_q.pop();
-                    right_q.push(temp);
+                if(!right_s.empty()){
+                    char temp = right_s.top();
+                    right_s.pop();
+                    left_s.push(temp);
                 }
             }
             else if(str[i] == '-'){
-                if(!left_q.empty()){
-                    left_q.pop();
+                if(!left_s.empty()){
+                    left_s.pop();
                 }
             }
-            left_q.push(str[i]);
+            else{
+                left_s.push(str[i]);
+            }
         }
         
+        while(!left_s.empty()){
+            char temp = left_s.top();
+            left_s.pop();
+            right_s.push(temp);
+            
+        }
         
+        while(!right_s.empty()){
+            cout << right_s.top();
+            right_s.pop();
+        }
+        cout<<"\n";
     }
+    
+    return 0;
 }
