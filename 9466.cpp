@@ -2,64 +2,69 @@
 //  9466.cpp
 //  Algorithm_2017
 //
-//  Created by 수노 on 2017. 1. 9..
+//  Created by 수노 on 2017. 1. 31..
 //  Copyright © 2017년 수노. All rights reserved.
 //
 
-#include <cstdio>
-#include <queue>
-#include <map>
+#include <iostream>
+#include <string.h>
+#include <stack>
 
 using namespace std;
+int stu[100001];
+bool visited[100001];
+bool cycle[100001];
+int cnt = 0;
+int n;
+stack<int> s;
 
-int graph[100001] = {0,};
-bool visited[100001] = {false,};
-queue<int> q;
-
-void bfs(){
-    int first = q.front();
-    int before = -1;
-    map<int, int> m;
+void search(int x){
+    visited[x] = true;
     
-    while(!q.empty()){
-        int start = q.front();
-        q.pop();
+    for(int i=1; i<=n; i++){
+        if(stu[x] == i){
+            if(!visited[i]){
+                s.push(i);
+            }
+            else{
+                int root = i;
+                bool find = false;
+                while(s.empty()){
+                    int temp = s.top();
+                    s.pop();
         
-        if(graph[start] == first){ //자기순환
-            printf("cycle:%d\n",graph[start]);
-        }
-        else if(graph[start] == m.find(graph[start])->second){
-            printf("add map -> %d\n", m.find(graph[start])->second);
-        }
-        
-        if(visited[graph[start]] == false && graph[start] != 0){
-            visited[graph[start]] = true;
-            before = start;
-            q.push(graph[start]);
+                    if(find){
+                        cnt ++;
+                        cout << x << "," << i << ":" << cnt << "\n";
+                    }
+                    else{
+                        if(temp == root){
+                            cycle[temp] = true;
+                            find = true;
+                        }
+                    }
+                }
+            }
         }
     }
 }
 
 int main(){
     int t;
-    scanf("%d", &t);
+    cin >> t;
     
     while(t--){
-        int n;
-        scanf("%d", &n); //2<= n <=100,000
-        int temp;
-        for(int i=1; i<=n; i++){
-            scanf("%d", &temp);
-            graph[i] = temp;
-        }
+        cin >> n;
+        memset(stu, 0, sizeof(stu));
+        memset(visited, false, sizeof(visited));
+        memset(cycle, false, sizeof(cycle));
         
         for(int i=1; i<=n; i++){
-            if(visited[i] == false){
-                visited[i] = true;
-                q.push(i);
-                printf("push%d\n",i);
-                bfs();
+            if(!visited[i]){
+                s.push(i);
+                search(i);
             }
         }
     }
+    return 0;
 }

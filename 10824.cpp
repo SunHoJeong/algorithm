@@ -19,8 +19,8 @@ int main(){
     string str1 = a+b;
     string str2 = c+d;
     
-    long long first = stoi(str1);
-    long long second = stoi(str2);
+    long long first = stoll(str1);
+    long long second = stoll(str2);
     
     cout << first + second << "\n";
     
