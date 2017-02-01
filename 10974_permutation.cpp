@@ -1,8 +1,8 @@
 //
-//  10972.cpp
+//  10974_permutation.cpp
 //  Algorithm_2017
 //
-//  Created by 수노 on 2017. 1. 31..
+//  Created by 수노 on 2017. 2. 1..
 //  Copyright © 2017년 수노. All rights reserved.
 //
 
@@ -12,23 +12,20 @@
 using namespace std;
 
 int main(){
-    int arr[100001];
+    int arr[10];
     int n;
     cin >> n;
     
     for(int i=0; i<n; i++){
-        cin >> arr[i];
+        arr[i] = i+1;
     }
     
-    if(next_permutation(arr, arr+n)){
+    do{
         for(int i=0; i<n; i++){
             cout << arr[i] << " ";
         }
         cout << "\n";
-    }
-    else{
-        cout << -1 << "\n";
-    }
+    }while(next_permutation(arr, arr+n));
     
     return 0;
 }
