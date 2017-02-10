@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <string>
+#include <algorithm>
 #include <vector>
 
 using namespace std;
@@ -17,19 +18,22 @@ vector<int> v;
 int len = 0;
 
 int main(){
+    int sum = 0;
     string str;
     cin >> str;
-    len = str.size();
-    cout << str.size() << "\n";
-    v.resize(len);
-    for(int i=0; i<str.size(); i++){
-        v[i] = str[i]-'0';
+    
+    for(char c : str){
+        sum += c-'0';
     }
     
-    for(auto item: v){
-        cout << item << " ";
+    sort(str.begin(), str.end());
+    
+    if(str[0] == '0' && sum % 3 ==0){
+        reverse(str.begin(), str.end());
+        cout << str << "\n";
+    }else{
+        cout << -1 << "\n";
     }
-    cout << "\n";
     
     return 0;
 }
