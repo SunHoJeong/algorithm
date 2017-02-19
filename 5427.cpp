@@ -6,173 +6,136 @@
 //  Copyright © 2017년 수노. All rights reserved.
 //
 
-#include <cstdio>
+#include <iostream>
+#include <string.h>
+#include <string>
 #include <queue>
 
 using namespace std;
 
-int n;
-int graph[1001][1001] = {0,};
-int w;
-int h;
-queue<int> q;
-queue<int> s_q;
+int dir[4][2] = {{-1,0},{0,1},{1,0},{0,-1}};
 
-void move(int depth){
-    //depth == 상근이가 있던 위치
-    
-    for(int i=1; i<=h; i++){//불 큐에넣기
-        for(int j=1; j<=w; j++){
-            if(graph[i][j] == -3){
-                q.push(i*10000+j);
-                //printf("불push:%d %d, depth:%d\n", i,j,depth);
-            }
-            else if(graph[i][j] == depth){
-                s_q.push(i*10000+j);
-                //printf("상근push: %d %d depth:%d\n", i,j,depth);
-            }
-        }
-    }
-    
-    while(!q.empty()){ //fire pop
-        int start = q.front();
-        q.pop();
-        int f_row = start/10000;
-        int f_col = start%10000;
-        
-        if(graph[f_row][f_col+1] >= -1){ //빈공간, 상근이가 지나간곳
-            graph[f_row][f_col+1] = -3;
-        }
-        if(graph[f_row+1][f_col] >= -1){
-            graph[f_row+1][f_col] = -3;
-        }
-        if(graph[f_row][f_col-1] >= -1){
-            graph[f_row][f_col-1] = -3;
-        }
-        if(graph[f_row-1][f_col] >= -1){
-            graph[f_row-1][f_col] = -3;
-        }
-    }
+int col, row;
+int graph[1003][1003];
 
-    bool flag = false;
 
-    while(!s_q.empty()){ //상근 pop
-//        if(s_q.front() != depth)
-//            continue;
-        int start = s_q.front();
-        s_q.pop();
-        int s_row = start/10000;
-        int s_col = start%10000;
-        //printf("상근이시작start: %d %d\n", s_row, s_col);
+void sol(queue<int> sg_q, queue<int> fire_q){
+    bool flag = true;
     
-        if(graph[s_row][s_col+1] == -1){
-            graph[s_row][s_col+1] = depth +1;
-            flag = true;
-            //printf("우\n");
-            if(s_row == 1 || s_row == h || s_col+1 ==1 || s_col+1 == w){
-                printf("%d\n", graph[s_row][s_col+1]+1);
-                return;
-            }
-        }
-        if(graph[s_row+1][s_col] == -1){
-            graph[s_row+1][s_col] = depth +1;
-            flag = true;
-            //printf("하\n");
-            if(s_row +1 ==1 ||s_row + 1 == h || s_col ==1 || s_col == w){
-                printf("%d\n", graph[s_row+1][s_col]+1);
-                return;
-            }
-        }
-        if(graph[s_row][s_col-1] == -1){
-            graph[s_row][s_col-1] = depth +1;
-            flag = true;
-            //printf("좌\n");
-            if(s_row ==1 || s_row == h || s_col -1 ==1 || s_col -1 == w){
-                printf("%d\n", graph[s_row][s_col-1]+1);
-                return;
-            }
-        }
-        if(graph[s_row-1][s_col] == -1){
-            graph[s_row-1][s_col] = depth +1;
-            flag = true;
-            //printf("상\n");
-            if(s_row -1 ==1 ||s_row -1 == h || s_col == 1 || s_col == w){
-                printf("%d\n", graph[s_row-1][s_col]+1);
-                return;
-            }
-        }
-        
-        
-        /*printf("--depth:%d--\n",depth);
-        for(int i=0; i<=h+1; i++){
+    while(flag){
+//        for(int i=1; i<=row; i++){
+//            for(int j=1; j<=col; j++){
+//                cout << graph[i][j] << " ";
+//            }
+//            cout << "\n";
+//        }
+//        cout << "\n";
+        int sg_len = sg_q.size();
+        for(int i=0; i<sg_len; i++){
+            int s_start = sg_q.front();
+            sg_q.pop();
+            int s_row = s_start/10000;
+            int s_col = s_start%10000;
+//            if(s_row == 1 || s_row == row || s_col == 1 || s_col == col){
+//                if(graph[s_row][s_col] == -3){
+//                    cout << "1\n";
+//                    return;
+//                }
+//            }
             
-            for(int j=0; j<=w+1; j++){
-                printf("%3d", graph[i][j]);
+            for(int i=0; i<4; i++){
+                int sr = s_row+dir[i][0];
+                int sc = s_col+dir[i][1];
+                
+                if(0 < sr && sr <= row && 0 < sc && sc <= col &&
+                   graph[sr][sc] == 0){
+                    if(graph[s_row][s_col] == -3){
+                        graph[sr][sc] =1;
+                    }
+                    else{
+                        graph[sr][sc] = graph[s_row][s_col]+1;
+                    }
+                    
+                    if(sr == 1 || sr == row || sc == 1 || sc == col){
+                        //cout << sr << "," << sc << "\n";
+                        cout << graph[sr][sc]+1<<"\n";
+                        return;
+                    }
+                    sg_q.push(sr*10000+sc);
+                }
             }
-            printf("\n");
-        }*/
+        }
+        
+        if(sg_q.size() == 0){
+            cout << "IMPOSSIBLE\n";
+            
+            return;
+        }
+        
+        int f_len = fire_q.size();
+        for(int i=0; i<f_len; i++){
+            int f_start = fire_q.front();
+            fire_q.pop();
+            int f_row = f_start/10000;
+            int f_col = f_start%10000;
+            
+            for(int i=0; i<4; i++){
+                int fr = f_row+dir[i][0];
+                int fc = f_col+dir[i][1];
+                
+                if(0 < fr && fr <= row && 0 < fc && fc <= col &&
+                   graph[fr][fc] != -1 && graph[fr][fc] != -2){
+                    graph[fr][fc] = -2;
+                    fire_q.push(fr*10000+fc);
+                }
+            }
+        }
+        
         
     }
-    
-    if(!flag){
-        printf("IMPOSSIBLE\n");
-        return;
-    }
-    move(depth+1);
-    
-    
 }
 
 int main(){
-    scanf("%d", &n);
+    int t;
+    cin >> t;
     
-    while(n--){
+    while(t--){
+        memset(graph, -1, sizeof(graph));
+        queue<int> fire_q;
+        queue<int> sg_q;
+        cin >> col >> row;
         
-        scanf("%d %d", &w, &h);
-        
-        for(int i=0; i<=h+1; i++){
-            for(int j=0; j<=w+1; j++){
-                graph[i][j] = -2;
-            }
-        }
-        bool flag = false;
-        
-        for(int i=1; i<=h; i++){
-            char input[1001];
-            scanf("%s", input);
-            for(int j=0; j<w; j++){
-                if(input[j] == '.'){//-1 빈공간
+        bool check = false;
+        for(int i=1; i<=row; i++){
+            string str;
+            cin >> str;
+            for(int j=0; j<col; j++){
+                if(str[j] == '#'){ //벽
                     graph[i][j+1] = -1;
                 }
-                else if(input[j] == '#'){//-2 벽
-                    graph[i][j+1] = -2;
-                }
-                else if(input[j] == '@'){//0 상근이의 시작위치
-                    if(i == 1 || i == h || j+1 ==1 || j+1 == w){
-                        flag = true;
-                    }
+                else if(str[j] == '.'){ //빈공간
                     graph[i][j+1] = 0;
                 }
-                else if(input[j] == '*'){//-3 불
+                else if(str[j] == '@'){ //상근 시작위치
+                    if(i==1 || i==row || j+1 ==1 || j+1 == col){
+                        check = true;
+                    }
                     graph[i][j+1] = -3;
+                    sg_q.push(i*10000+j+1);
+                }
+                else{ // 불
+                    graph[i][j+1] = -2;
+                    fire_q.push(i*10000+j+1);
                 }
             }
         }
-        
-        /*for(int i=0; i<=h+1; i++){
-            for(int j=0; j<=w+1; j++){
-                printf("%3d", graph[i][j]);
-            }
-            printf("\n");
-        }
-        printf("\n");*/
-        if(flag){
-            printf("%d\n",1); //시작위치가 모서리에 위치
+        if(check){
+            cout << "1\n" ;
         }
         else{
-            move(0);
+            sol(sg_q, fire_q);
         }
-    
+        
     }
-    
+    return 0;
 }

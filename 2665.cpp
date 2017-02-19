@@ -7,152 +7,62 @@
 //
 
 #include <iostream>
-#include <queue>
 #include <string>
-#include <algorithm>
 
 using namespace std;
 
-queue<int> q;
-int graph[55][55];
-int d[55][55];
-bool visited[55][55];
+int graph[52][52];
+bool visited[52][52];
+int d[52][52];
+int dir[4][2] = { {-1,0}, {0,1}, {1,0}, {0,-1} };
 int n;
-int ans = 123456789;
 
-/*
-void bfs(){
-    while(!q.empty()){
-        int start = q.front();
-        q.pop();
-        int row = start/10000;
-        int col = start%10000;
-        
-        if(graph[row-1][col] != -2 && !visited[row-1][col]){
-            visited[row-1][col] = true;
-            q.push((row-1)*10000+col);
-            if(graph[row-1][col] == 1){ //안막힘
-                d[row-1][col] = min(d[row-1][col], d[row][col]);
-            }
-            else if(graph[row-1][col] == 0){ //막힘
-                d[row-1][col] = min(d[row-1][col], d[row][col] +1);
-            }
-        }
-        if(graph[row][col+1] != -2 && !visited[row][col+1] ){
-            visited[row][col+1] = true;
-            q.push(row*10000+col+1);
-            if(graph[row][col+1] == 1){
-                d[row][col+1] = min(d[row][col+1], d[row][col]);
-            }
-            else if(graph[row][col+1] == 0){
-                d[row][col+1] = min(d[row][col+1], d[row][col] +1);
-            }
-        }
-        if(graph[row+1][col] != -2 && !visited[row+1][col]){
-            visited[row+1][col] = true;
-            q.push((row+1)*10000+col);
-
-            if(graph[row+1][col] == 1){
-                d[row+1][col] = min(d[row+1][col], d[row][col]);
-            }
-            else if(graph[row+1][col] == 0){
-                d[row+1][col] = min(d[row+1][col], d[row][col] +1);
-            }
-        }
-        if(graph[row][col-1] != -2 && !visited[row][col-1]){
-            visited[row][col-1] = true;
-            q.push(row*10000+col-1);
-
-            if(graph[row][col-1] == 1){
-                d[row][col-1] = min(d[row][col-1], d[row][col]);
-            }
-            else if(graph[row][col-1] == 0){
-                d[row][col-1] = min(d[row][col-1], d[row][col] +1);
-            }
-        }
+void sol(int r, int c, int cnt){
+    //cout << "sol: " << r << "," << c <<"\n";
+    if(graph[r][c] == 1)
+        cnt++;
+    
+    d[r][c] = cnt;
+    if(r == n && c == n){
+        return;
     }
-}*/
-
-void bfs(){
-    while(!q.empty()){
-        int start = q.front();
-        q.pop();
-        int row = start/10000;
-        int col = start%10000;
-        
-        if(graph[row+1][col] != -2){
-            if(graph[row+1][col] == 1){
-                d[row+1][col] = min(d[row+1][col], d[row][col]);
-            }
-            else if(graph[row+1][col] == 0){
-                d[row+1][col] = min(d[row+1][col], d[row][col]+1);
-            }
-            q.push((row+1)*10000+col);
-        }
-        if(graph[row][col+1] != -2){
-            if(graph[row][col+1] == 1){
-                d[row][col+1] = min(d[row][col+1], d[row][col]);
-            }
-            else if(graph[row][col+1] == 0){
-                d[row][col+1] = min(d[row][col+1], d[row][col]+1);
-            }
-            q.push(row*10000+col+1);
-        }
-        if(graph[row][col-1] != -2){
-            if(graph[row][col-1] == 1){
-                d[row][col-1] = min(d[row][col-1], d[row][col]);
-            }
-            else if(graph[row][col-1] == 0){
-                d[row][col-1] = min(d[row][col-1], d[row][col]+1);
-            }
-            q.push(row*10000+col-1);
-        }
-        
-        if(graph[row-1][col] != -2){
-            if(graph[row-1][col] == 1){
-                d[row-1][col] = min(d[row-1][col], d[row][col]);
-            }
-            else if(graph[row-1][col] == 0){
-                d[row-1][col] = min(d[row-1][col], d[row][col]+1);
-            }
-            q.push((row-1)*10000+col);
+    
+    for(int i=0; i<4; i++){
+        int rr = r+dir[i][0];
+        int cc = c+dir[i][1];
+        //cout << rr << "," << cc << "\n";
+        if(0 < rr && rr <=n && 0 < cc && cc <= n && d[rr][cc] > cnt){
+            sol(rr, cc, cnt);
         }
     }
 }
 
 int main(){
-    cin >> n;
+    cin >>n;
     
-    for(int i=0; i<=n+1; i++){
-        for(int j=0; j<=n+1; j++){
-            graph[i][j] = -1;
-            d[i][j] = 123456789;
+    for(int i=1; i<=n; i++){
+        for(int j=1; j<=n; j++){
+            d[i][j] = 9999;
         }
     }
     
     for(int i=1; i<=n; i++){
         string str;
         cin >> str;
-        for(int j=0; j<n; j++){
-            if(str[j] == '0'){
+        for(int j=0; j<str.size(); j++){
+            if(str[j] == '1'){
                 graph[i][j+1] = 0;
             }
-            else if(str[j] == '1'){
+            else{
                 graph[i][j+1] = 1;
             }
         }
     }
-    d[1][1] = 0;
-    q.push(10001);
-    bfs();
     
-    for(int i=1; i<=n; i++){
-        for(int j=1; j<=n; j++){
-            cout << d[i][j] << " ";
-        }
-        cout << "\n";
-    }
+    sol(1,1,0);
+
     cout << d[n][n] << "\n";
+    
     
     return 0;
 }
