@@ -8,30 +8,28 @@
 
 #include <iostream>
 #include <vector>
+#include <queue>
 #include <string.h>
 
 using namespace std;
-const int INF = 1000000000;
 
 vector<int> v[101];
+queue<int> q;
 int d[101];
+int sum[101];
 bool visited[101];
-int dist[101][101];
 
-void dfs(int x, int st, int des, int depth){
-    visited[x] = true;
-    
-    if(x==des){
-        if(dist[st][des] > depth){
-            dist[st][des] = depth;
-            cout << st << "->" << x <<":"<<depth<<"\n";
-        }
-        return;
-    }
-    
-    for(int a : v[x] ){// x->a
-        if(!visited[a]){
-            dfs(a, st, des, depth + 1);
+void bfs(){
+    while(!q.empty()){
+        int x = q.front();
+        q.pop();
+        
+        for(int next : v[x]){
+            if(!visited[next]){
+                visited[next] = true;
+                d[next] = d[x]+1;
+                q.push(next);
+            }
         }
     }
 }
@@ -47,40 +45,30 @@ int main(){
     }
     
     for(int i=1; i<=n; i++){
-        for(int j=1; j<=n; j++){
-            dist[i][j] = INF;
-        }
-    }
-    
-    for(int i=1; i<=n; i++){
-        cout << i << ": " ;
-        for(int con : v[i]){
-            cout << con << " ";
-        }
-        cout << "\n";
-    }
-    
-    for(int i=1; i<=n; i++){// i -> j
+        memset(visited, false, sizeof(visited));
+        memset(d, 0, sizeof(d));
+        
+        q.push(i);
+        visited[i] = true;
+        d[i] = 0;
+        bfs();
+        
         for(int j=1; j<=n; j++){
             if(i != j){
-                memset(visited, false, sizeof(visited));
-                dfs(i, i, j, 0);
+                sum[i] += d[j];
             }
         }
     }
     
+    int min = 1000000000;
+    int index = 0;
     for(int i=1; i<=n; i++){
-        for(int j=1; j<=n; j++){
-            if(dist[i][j] != INF)
-                d[i] += dist[i][j];
+        if(min > sum[i]){
+            min = sum[i];
+            index = i;
         }
     }
-    
-    for(int i=1; i<=n; i++){
-        cout << d[i] << " ";
-    }
-    
-    
+    printf("%d\n",index);
     
     return 0;
 }
