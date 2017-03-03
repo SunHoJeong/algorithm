@@ -7,19 +7,22 @@
 //
 
 #include <iostream>
-#include <string.h>
 #include <string>
 #include <queue>
+#include <string.h>
 
 using namespace std;
 
 int dir[4][2] = {{-1,0},{0,1},{1,0},{0,-1}};
 
+queue<int> fire_q;
+queue<int> sg_q;
 int col, row;
 int graph[1003][1003];
+int cnt = 0;
 
 
-void sol(queue<int> sg_q, queue<int> fire_q){
+void sol(){
     bool flag = true;
     
     while(flag){
@@ -30,47 +33,7 @@ void sol(queue<int> sg_q, queue<int> fire_q){
 //            cout << "\n";
 //        }
 //        cout << "\n";
-        int sg_len = sg_q.size();
-        for(int i=0; i<sg_len; i++){
-            int s_start = sg_q.front();
-            sg_q.pop();
-            int s_row = s_start/10000;
-            int s_col = s_start%10000;
-//            if(s_row == 1 || s_row == row || s_col == 1 || s_col == col){
-//                if(graph[s_row][s_col] == -3){
-//                    cout << "1\n";
-//                    return;
-//                }
-//            }
-            
-            for(int i=0; i<4; i++){
-                int sr = s_row+dir[i][0];
-                int sc = s_col+dir[i][1];
-                
-                if(0 < sr && sr <= row && 0 < sc && sc <= col &&
-                   graph[sr][sc] == 0){
-                    if(graph[s_row][s_col] == -3){
-                        graph[sr][sc] =1;
-                    }
-                    else{
-                        graph[sr][sc] = graph[s_row][s_col]+1;
-                    }
-                    
-                    if(sr == 1 || sr == row || sc == 1 || sc == col){
-                        //cout << sr << "," << sc << "\n";
-                        cout << graph[sr][sc]+1<<"\n";
-                        return;
-                    }
-                    sg_q.push(sr*10000+sc);
-                }
-            }
-        }
-        
-        if(sg_q.size() == 0){
-            cout << "IMPOSSIBLE\n";
-            
-            return;
-        }
+        cnt ++ ;
         
         int f_len = fire_q.size();
         for(int i=0; i<f_len; i++){
@@ -91,7 +54,36 @@ void sol(queue<int> sg_q, queue<int> fire_q){
             }
         }
         
+        int sg_len = sg_q.size();
+        for(int i=0; i<sg_len; i++){
+            int s_start = sg_q.front();
+            sg_q.pop();
+            int s_row = s_start/10000;
+            int s_col = s_start%10000;
+            
+            for(int i=0; i<4; i++){
+                int sr = s_row+dir[i][0];
+                int sc = s_col+dir[i][1];
+                if(0 < sr && sr <= row && 0 < sc && sc <= col &&
+                   graph[sr][sc] == 0){
+                    
+                    graph[sr][sc] = cnt+1;
+                    if(sr == 1 || sr == row || sc == 1 || sc == col){
+                        cout << cnt+1 <<"\n";
+                        return;
+                    }
+                    
+                    sg_q.push(sr*10000+sc);
+                }
+            }
+        }
         
+        if(sg_q.empty()){
+            cout << "IMPOSSIBLE\n";
+            
+            return;
+        }
+    
     }
 }
 
@@ -100,11 +92,14 @@ int main(){
     cin >> t;
     
     while(t--){
-        memset(graph, -1, sizeof(graph));
-        queue<int> fire_q;
-        queue<int> sg_q;
-        cin >> col >> row;
+        memset(graph, 0, sizeof(graph));
+        while(!fire_q.empty())
+            fire_q.pop();
+        while(!sg_q.empty())
+            sg_q.pop();
         
+        cin >> col >> row;
+        cnt = 0;
         bool check = false;
         for(int i=1; i<=row; i++){
             string str;
@@ -133,7 +128,7 @@ int main(){
             cout << "1\n" ;
         }
         else{
-            sol(sg_q, fire_q);
+            sol();
         }
         
     }
