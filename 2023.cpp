@@ -12,35 +12,39 @@ using namespace std;
 const int MAX = 100000000;
 
 bool prime[MAX]; //false면 소수
+int n;
+
+void back(int depth, int x){
+    if(depth == n-1){
+        printf("%d\n",x);
+        return;
+    }
+    
+    for(int i=0; i<=9; i++){
+        if((x*10+i) < MAX && !prime[x*10+i]){
+            back(depth+1, x*10+i);
+        }
+    }
+}
 
 int main(){
     prime[1] = true;
-    for(int i=2; i*i<=MAX; i++){
+    for(int i=2; i*i<MAX; i++){
         if(!prime[i]){
-            for(int j=i+i; j<=MAX; j += i){
+            for(int j=i+i; j<MAX; j += i){
                 prime[j] = true;
             }
         }
     }
     
-    int n;
+    // 1 12 123 1234
     scanf("%d", &n);
-    int st=1;
-    int end=1;
-    for(int i=1; i<n; i++){
-        st *= 10;
-        end *= 10;
-    }
-    end *= 10;
-    printf("%d, %d\n",st,end);
     
-//    for(int i=st; i<end; i++){
-//        int div = end;
-//        for(int j=1; j<=n; j++){//
-//            if(!prime[i%div]) //1~n 자리 확인
-//                
-//        }
-//    }
+    for(int i=1; i<=9; i++){
+        if(!prime[i]){
+            back(0, i);
+        }
+    }
     
     return 0;
 }
