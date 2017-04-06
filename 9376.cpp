@@ -104,11 +104,10 @@ int main(){
                         continue;
                     
                     
-                    if(!visited[rr][cc] && graph[rr][cc] != -1){
+                    if(graph[rr][cc] != -1){
                         if(graph[rr][cc] == -2 && dist[rr][cc] > dist[min_r][min_c]+1){//#
                             dist[rr][cc] = dist[min_r][min_c] + 1;
                             graph[rr][cc] = -3; // '.'
-                            q.push(P(rr,cc));
                             if(rr==0 || cc==0 || rr==row-1 || cc==col-1){
                                 if(ans > dist[rr][cc]){
                                     ans = dist[rr][cc];
@@ -121,7 +120,6 @@ int main(){
                         }
                         else if(graph[rr][cc] == -3){//.
                             dist[rr][cc] = dist[min_r][min_c];
-                            q.push(P(rr,cc));
                             if(rr==0 || cc==0 || rr==row-1 || cc==col-1){
                                 if(ans > dist[rr][cc]){
                                     ans = dist[rr][cc];
