@@ -16,7 +16,7 @@ int d[501][501];
 int dir[4][2] = { {-1,0}, {0,1}, {1,0}, {0,-1}};
 
 int dp(int r, int c){
-    if(r==row-1 && c==col-1){
+    if(r==0 && c==0){
         return 1;
     }
     
@@ -33,7 +33,7 @@ int dp(int r, int c){
         if(rr<0 || rr>=row || cc<0 || cc>=col)
             continue;
         
-        if(graph[r][c] > graph[rr][cc]){
+        if(graph[r][c] < graph[rr][cc]){
             d[r][c] += dp(rr,cc);
         }
     }
@@ -55,7 +55,7 @@ int main(){
         }
     }
     
-    printf("%d\n",dp(0,0));
+    printf("%d\n",dp(row-1,col-1));
     
     return 0;
 }
