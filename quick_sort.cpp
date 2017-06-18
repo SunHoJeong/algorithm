@@ -7,7 +7,7 @@
 //
 
 /*
- merge sort
+ quick sort
  O(NlongN)
  */
 
