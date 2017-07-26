@@ -1,38 +1,69 @@
+
 #include <iostream>
 #include <vector>
 
 using namespace std;
 
-int n,s;
-int ans = 0;
-void dfs(vector<int>& v, int index, int sum){
-    //cout << index << "," << sum << "\n";
-    if(index >= n){
-        if(sum == s){
-            ans += 1;
+vector<int> v = {1,2,3,4,5,6,7,8,9};
+
+void mergeTwo(int arr[], int left, int mid, int right){
+    int fIdx = left;
+    int rIdx = mid+1;
+    int k = left;
+    int tempArr[100];
+    
+    while(fIdx <= mid && rIdx <= right){
+        if(arr[fIdx] <= arr[rIdx]){
+            tempArr[k] = arr[fIdx++];
         }
-        return;
+        else{
+            tempArr[k] = arr[rIdx++];
+        }
+        
+        k++;
     }
     
-    dfs(v,index+1, sum+v[index]);
-    dfs(v,index+1, sum);
+    if(fIdx > mid){
+        for(int i=rIdx; i<=right; i++, k++){
+            tempArr[k] = arr[i];
+        }
+    }
+    
+    if(rIdx > right){
+        for(int i=fIdx; i<=mid; i++, k++){
+            tempArr[k] = arr[i];
+        }
+    }
+    
+    for(int i = left; i<=right; i++){
+        arr[i] = tempArr[i];
+    }
+}
+
+void mergeSort(int arr[], int left, int right){
+    int mid = (left+right)/2;
+    
+    mergeSort(arr, left, mid);
+    mergeSort(arr, mid+1, right);
 }
 
 int main(){
-    cin >> n >> s;
+    int arr[10] = {1,5,9,6,3,2,7,8,10,4};
+    int len = sizeof(arr)/sizeof(int);
     
-    vector<int> v(n);
-    
-    for(int i=0; i<n; i++){
-        cin >> v[i];
+    cout << "정렬 전\n";
+    for(int i=0; i<len; i++){
+        cout << arr[i] << " ";
     }
+    cout << "\n";
     
-    dfs(v,0,0);
+    //mergeSort(arr, 0, len-1);
     
-    if(s == 0)
-        ans--;
-    
-    cout << ans << "\n";
+    cout << "정렬 후\n";
+    for(int i=0; i<len; i++){
+        cout << arr[i] << " ";
+    }
+    cout << "\n";
     
     return 0;
 }
