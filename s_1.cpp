@@ -70,8 +70,6 @@ int main(){
         cout << "Case #"<< k <<"\n";
         cout << answer <<"\n";
         
-        
-        
     }
     return 0;
 }

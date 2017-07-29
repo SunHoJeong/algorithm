@@ -41,10 +41,15 @@ void mergeTwo(int arr[], int left, int mid, int right){
 }
 
 void mergeSort(int arr[], int left, int right){
-    int mid = (left+right)/2;
-    
-    mergeSort(arr, left, mid);
-    mergeSort(arr, mid+1, right);
+    int mid;
+    if(left < right){
+        mid = (left+right)/2;
+        
+        mergeSort(arr, left, mid);
+        mergeSort(arr, mid+1, right);
+        
+        mergeSort(arr, left, right);
+    }
 }
 
 int main(){
@@ -57,7 +62,7 @@ int main(){
     }
     cout << "\n";
     
-    //mergeSort(arr, 0, len-1);
+    mergeSort(arr, 0, len-1);
     
     cout << "정렬 후\n";
     for(int i=0; i<len; i++){
